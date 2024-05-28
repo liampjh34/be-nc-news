@@ -1,6 +1,11 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+## Hidden files
+This repo has the following files in the .gitignore:
+- .env.test
+- .env.development
+
+These files reference the test and development databases for the project. You will need to create your own equivalents to run this project.
 
 
 
