@@ -16,11 +16,11 @@ describe("/api/topics", () => {
   it("should get all available topics", async () => {
     const { body } = await request(app).get("/api/topics");
     console.log(body)
-    expect(body.length).toBe(3);
+    expect(body.topics.length).toBe(3);
   });
   it("should have a slug and description for each row", async () => {
     const { body } = await request(app).get("/api/topics");
-    body.forEach((topic) => {
+    body.topics.forEach((topic) => {
       expect(topic).toMatchObject({
         description: expect.any(String),
         slug: expect.any(String)
