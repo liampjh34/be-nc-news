@@ -15,7 +15,6 @@ afterAll(() => {
 describe("/api/topics", () => {
   it("should get all available topics", async () => {
     const { body } = await request(app).get("/api/topics");
-    console.log(body)
     expect(body.topics.length).toBe(3);
   });
   it("should have a slug and description for each row", async () => {
