@@ -9,7 +9,9 @@ exports.fetchAllTopics = async () => {
                 msg: 'No results found'
             })
         } else {
-            return rows
+            return {
+                topics: rows
+            }
         }
     } catch(error) {
         next(error)
