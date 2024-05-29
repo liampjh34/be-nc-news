@@ -14,6 +14,6 @@ exports.fetchAllTopics = async () => {
             }
         }
     } catch(error) {
-        next(error)
+        throw error;
     }
 }

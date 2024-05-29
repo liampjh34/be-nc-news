@@ -15,7 +15,6 @@ afterAll(() => {
 describe("/api/topics", () => {
   it("should get all available topics", async () => {
     const { body } = await request(app).get("/api/topics");
-    console.log(body)
     expect(body.topics.length).toBe(3);
   });
   it("should have a slug and description for each row", async () => {
@@ -31,8 +30,9 @@ describe("/api/topics", () => {
     await db.query(`DELETE FROM comments;`)
     await db.query(`DELETE FROM articles;`)
     await db.query(`DELETE FROM topics;`)
-    const { body } = await request(app).get("/api/topics");
-    expect(body.status).toBe(404)
+    const { body } = await request(app)
+    .get("/api/topics")
+    .expect(404)
     expect(body.msg).toBe('No results found')
   });
 });
