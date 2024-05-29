@@ -14,7 +14,7 @@ afterAll(() => {
     return db.end()
 })
 
-describe('/api/articles/:article_id/comments', () => {
+describe('GET /api/articles/:article_id/comments', () => {
     it('404: article not found', async () => {
         try {
             const { body } = await request(app)
@@ -65,5 +65,59 @@ describe('/api/articles/:article_id/comments', () => {
         } catch(error) {
             throw error
         }
+    });
+});
+
+describe('POST /api/articles/:article_id/comments', () => {
+    it('should post a comment to the database', async () => {
+        const input = {
+            "username": "butter_bridge",
+            "body": "Testing, testing. 1, 2, 3."
+        }
+        const { body } = await request(app)
+        .post('/api/articles/1/comments')
+        .send(input)
+        .expect(200)
+        expect(body).toMatchObject({
+            comment_id: expect.any(Number),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            votes: expect.any(Number),
+            created_at: expect.any(String)
+        })
+    });
+    it('should not post when a username does not exist', async () => {
+        const input = {
+            "username": "liampjh34",
+            "body": "This should not work."
+        }
+        const { body } = await request(app)
+        .post('/api/articles/1/comments')
+        .send(input)
+        .expect(400)
+        expect(body.msg).toEqual("No user found")
+    });
+    it('should not post when an article does not exist', async () => {
+        const input = {
+            "username": "butter_bridge",
+            "body": "Testing, testing. 1, 2, 3."
+        }
+        const { body } = await request(app)
+        .post('/api/articles/3423423/comments')
+        .send(input)
+        .expect(404)
+        expect(body.msg).toEqual("Article not found")
+    });
+    it('should not post when the article ID is NaN', async () => {
+        const input = {
+            "username": "butter_bridge",
+            "body": "Testing, testing. 1, 2, 3."
+        }
+        const { body } = await request(app)
+        .post('/api/articles/e/comments')
+        .send(input)
+        .expect(400)
+        expect(body.msg).toEqual("Wrong data type")
     });
 });
