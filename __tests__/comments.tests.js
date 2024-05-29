@@ -17,24 +17,22 @@ afterAll(() => {
 describe('/api/articles/:article_id/comments', () => {
     it('404: article not found', async () => {
         try {
-            const result = await request(app)
+            const { body } = await request(app)
             .get('/api/articles/34234234/comments')
+            .expect(404)
+            expect(body.msg).toBe('Article not found')
         } catch(error) {
-            expect(error).toMatchObject({
-                status: 404, 
-                msg: "No article found"
-            })
+            throw error
         }
     });
     it('400: not a number', async () => {
         try{
             const { body } = await request(app)
             .get('/api/articles/e/comments')
+            .expect(400)
+            expect(body.msg).toBe("Wrong data type")
         } catch(error) {
-            expect(error).toMatchObject({
-                status: 400,
-                msg: "Wrong data type"
-            })
+            throw error
         }
     });
     it('should return comments', async () => {
