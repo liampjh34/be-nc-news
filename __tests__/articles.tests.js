@@ -13,6 +13,36 @@ afterAll(() => {
 })
 
 describe('/api/articles', () => {
+    it('should return all articles', async () => {
+        const { body } = await request(app)
+        .get('/api/articles')
+        .expect(200)
+        body.forEach((article) => {
+            expect(article).toMatchObject({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                article_img_url: expect.any(String),
+                comment_count: expect.any(Number)
+            })
+        })
+    });
+    it('should return 0 comments for an article with no comments', async () => {
+        const { body } = await request(app)
+        .get('/api/articles')
+        .expect(200)
+        body.forEach((article) => {
+            if (article.article_id === 2) {
+                expect(article.comment_count).toBe(0)
+            }
+        })
+    });
+});
+
+describe('/api/articles/:article_id', () => {
     it('should return an article when given an ID', async () => {
         const { body } = await request(app)
         .get('/api/articles/2')
