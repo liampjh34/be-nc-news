@@ -8,8 +8,15 @@ exports.fetchArticleById = async (articleId) => {
 
     const {rows} = await db.query(queryString, queryParams);
 
-    return rows;
+    if (rows.length === 0 ) {
+      return Promise.reject({
+        status: 404,
+        msg: 'No results found'
+      })
+    } else {
+      return rows[0];
+    }
   } catch (error) {
-    throw error;
+    throw error
   }
 };

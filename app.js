@@ -17,7 +17,6 @@ app.get('/api/topics', getTopics)
 app.use((error, req, res, next) => {
     if (error.status) {
         res.status(error.status).send({
-            status: error.status,
             msg: error.msg
         })
     }

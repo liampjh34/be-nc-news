@@ -17,12 +17,20 @@ describe('/api/articles', () => {
         const { body } = await request(app)
         .get('/api/articles/2')
         .expect(200)
-        expect(body.length).toBe(1)
+        expect(body).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String)
+        })
     });
-    it('should 400 when no results are found', async () => {
+    it('should 404 when no results are found', async () => {
         const { body } = await request(app)
         .get('/api/articles/999')
-        .expect(400)
+        .expect(404)
         expect(body.msg).toBe('No results found')
     });
 });
