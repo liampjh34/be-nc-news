@@ -2,9 +2,11 @@ const { fetchArticles, fetchArticleById, updateArticle } = require('../models/ar
 
 exports.getArticles = async (req, res, next) => {
     try {
-        const fetchedArticles = await fetchArticles()
+        const { topic } = req.query
+        const fetchedArticles = await fetchArticles(topic)
         res.status(200).send(fetchedArticles)
     } catch(error) {
+        console.log(error)
         next(error)
     }
 }

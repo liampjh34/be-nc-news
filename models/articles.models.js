@@ -2,26 +2,36 @@ const db = require("../db/connection");
 const { checkArticleExists } = require("../error-handlers/check-article-exists");
 const { checkIsNumber } = require("../error-handlers/check-is-number");
 const { checkVotes } = require('../error-handlers/check-votes')
+const format = require('pg-format')
 
-exports.fetchArticles = async () => {
+exports.fetchArticles = async (topic=undefined) => {
   try {
-    const query = `SELECT 
-        articles.author,
-        articles.title,
-        articles.article_id,
-        articles.topic,
-        articles.created_at,
-        articles.votes,
-        articles.article_img_url,
-        CAST(COUNT(comments.body) AS INT) AS comment_count
-      FROM articles
-      LEFT JOIN comments
-      ON articles.article_id = comments.article_id
-      GROUP BY articles.article_id
-      ORDER BY articles.created_at DESC;
-    `
-    const results = await db.query(query)
-    return results.rows
+    let query = `SELECT 
+    articles.author,
+    articles.title,
+    articles.article_id,
+    articles.topic,
+    articles.created_at,
+    articles.votes,
+    articles.article_img_url,
+    CAST(COUNT(comments.body) AS INT) AS comment_count
+    FROM articles
+    LEFT JOIN comments
+    ON articles.article_id = comments.article_id`
+
+    if (!(topic === undefined)) {
+      const whereClause = format(` WHERE articles.topic = '%s'`, topic)
+      query += whereClause
+    }
+
+    query += ` 
+    GROUP BY articles.article_id
+    ORDER BY articles.created_at DESC;`
+
+    const { rows } = await db.query(query)
+    return {
+      articles: rows
+    }
   } catch (error) {
     throw error
   }
