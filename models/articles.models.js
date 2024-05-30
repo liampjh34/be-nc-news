@@ -1,4 +1,7 @@
 const db = require("../db/connection");
+const { checkArticleExists } = require("../error-handlers/check-article-exists");
+const { checkIsNumber } = require("../error-handlers/check-is-number");
+const { checkVotes } = require('../error-handlers/check-votes')
 
 exports.fetchArticles = async () => {
   try {
@@ -44,3 +47,25 @@ exports.fetchArticleById = async (articleId) => {
     throw error
   }
 };
+
+exports.updateArticle = async (articleId, voteChange) => {
+  try{
+    const errorHandlingPromises = [
+      checkArticleExists(articleId),
+      checkIsNumber(articleId),
+      checkVotes(voteChange, articleId)
+    ]
+  
+    const errorHandlingResults = await Promise.all(errorHandlingPromises)
+  
+    const queryString = `UPDATE articles
+    SET votes = votes + $1
+    WHERE article_id = $2
+    RETURNING *;`
+    const queryParams = [voteChange.inc_votes, articleId]
+    const result = await db.query(queryString, queryParams)
+    return result.rows
+  } catch(error) {
+    throw error
+  }
+}
