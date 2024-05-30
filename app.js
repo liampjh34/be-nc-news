@@ -2,7 +2,7 @@ const express = require('express');
 const { getTopics } = require('./controllers/topics.controllers');
 const { getApi } = require('./controllers/api.controllers');
 const { getArticles, getArticleById, patchArticle } = require('./controllers/articles.controllers');
-const { getArticleComments, postComment } = require('./controllers/comments.controllers');
+const { getArticleComments, postComment, deleteComment } = require('./controllers/comments.controllers');
 
 const app = express()
 
@@ -24,6 +24,9 @@ app.post('/api/articles/:article_id/comments', postComment)
 
 //PATCH
 app.patch('/api/articles/:article_id', patchArticle)
+
+//DELETE
+app.delete('/api/comments/:comment_id', deleteComment)
 
 //psql error handler
 app.use((error, req, res, next) => {
