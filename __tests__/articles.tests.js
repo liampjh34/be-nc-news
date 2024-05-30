@@ -99,14 +99,21 @@ describe('GET /api/articles/:article_id', () => {
             body: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number),
-            article_img_url: expect.any(String)
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number)
         })
     });
-    it('should 404 when no results are found', async () => {
+    it('should 404 when article does not exist', async () => {
         const { body } = await request(app)
-        .get('/api/articles/999')
+        .get('/api/articles/1423423')
         .expect(404)
-        expect(body.msg).toBe('No results found')
+        expect(body.msg).toBe('article not found')
+    });
+    it('should 400 when given a parametric ID that is NaN', async () => {
+        const { body } = await request(app)
+        .get('/api/articles/e')
+        .expect(400)
+        expect(body.msg).toBe('Wrong data type')
     });
 });
 
