@@ -90,7 +90,7 @@ describe('checkVotes()', () => {
             const result = await checkVotes(input, articleId)
         } catch(error) {
             expect(error).toMatchObject({
-                status: 403,
+                status: 400,
                 msg: 'Not allowed!'
             })
         }
@@ -104,7 +104,7 @@ describe('checkVotes()', () => {
             const result = await checkVotes(input, articleId)
         } catch(error) {
             expect(error).toMatchObject({
-                status: 403,
+                status: 400,
                 msg: 'Not allowed!'
             })
         }

@@ -18,7 +18,7 @@ exports.checkVotes = async (desiredDecrement, articleId) => {
 
         if (inc_votes > votes) {
             return Promise.reject({
-                status: 403,
+                status: 400,
                 msg: 'Not allowed!'
             })
         }
