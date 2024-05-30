@@ -70,5 +70,10 @@
       "created_at": "the timestamp of the comment",
       "votes": "the number of votes on the comments"
     }
+  },
+  "DELETE /api/comments/:comment_id" : {
+    "description": "delete a specified comment",
+    "queries": [],
+    "exampleResponse": {}
   }
 }

@@ -5,6 +5,7 @@ const db = require('../db/connection')
 const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index');
 const { checkVotes } = require('../error-handlers/check-votes');
+const { checkExists } = require('../error-handlers/check-exists');
 
 beforeEach(() => {
     return seed(testData)
@@ -105,6 +106,20 @@ describe('checkVotes()', () => {
             expect(error).toMatchObject({
                 status: 403,
                 msg: 'Not allowed!'
+            })
+        }
+    });
+});
+
+describe('checkExists()', () => {
+    it('should reject if the thing does not exist', async () => {
+        try{
+            const input = 234234
+            const result = await checkExists('comment', input)
+        } catch(error) {
+            expect(error).toMatchObject({
+                status: 404,
+                msg: 'comment not found'
             })
         }
     });

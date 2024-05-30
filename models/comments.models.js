@@ -4,10 +4,14 @@ const {
 } = require("../error-handlers/check-article-exists");
 const { checkIsNumber } = require("../error-handlers/check-is-number");
 const { checkIsUser } = require("../error-handlers/check-is-user");
+const { checkExists } = require('../error-handlers/check-exists')
 
 exports.fetchArticleComments = async (articleId) => {
   try {
-    const promises = [checkArticleExists(articleId), checkIsNumber(articleId)];
+    const promises = [
+      checkArticleExists(articleId), 
+      checkIsNumber(articleId)
+    ];
 
     const results = await Promise.all(promises);
 
@@ -51,3 +55,30 @@ exports.handleComment = async (username, article_id, body) => {
     throw error;
   }
 };
+
+exports.handleCommentDelete = async (commentId) => {
+  const errorHandlingPromises = [
+    checkExists('comment', commentId),
+    checkIsNumber(commentId)
+  ]
+
+  const errorHandlingResults = await Promise.all(errorHandlingPromises)
+
+  const queryString = `DELETE FROM comments
+  WHERE comment_id = $1
+  RETURNING *;`
+  const queryParams = [commentId]
+
+  const { rows } = await db.query(queryString, queryParams)
+
+  if (rows[0].length !== 0) {
+    return Promise.resolve({
+      status: 204
+    })
+  }
+
+  return Promise.reject({
+    status: 500,
+    msg: 'Unknown issue'
+  })
+}
