@@ -16,31 +16,23 @@ afterAll(() => {
 
 describe('GET /api/articles/:article_id/comments', () => {
     it('404: article not found', async () => {
-        try {
             const { body } = await request(app)
             .get('/api/articles/34234234/comments')
             .expect(404)
             expect(body.msg).toBe('Article not found')
-        } catch(error) {
-            throw error
-        }
     });
     it('400: not a number', async () => {
-        try{
             const { body } = await request(app)
             .get('/api/articles/e/comments')
             .expect(400)
             expect(body.msg).toBe("Wrong data type")
-        } catch(error) {
-            throw error
-        }
     });
     it('should return comments', async () => {
-        try {
             const { body } = await request(app)
             .get('/api/articles/1/comments')
             .expect(200)
-            body.forEach((comment) => {
+            expect(body.comments.length).toBeGreaterThan(0)
+            body.comments.forEach((comment) => {
                 expect(comment).toMatchObject({
                     comment_id: expect.any(Number),
                     body: expect.any(String),
@@ -50,27 +42,25 @@ describe('GET /api/articles/:article_id/comments', () => {
                     created_at: expect.any(String)
                 })
             })
-        } catch(error) {
-            throw error
-        }
     });
     it('should return comments ordered from most to least recent', async () => {
-        try {
             const { body } = await request(app)
             .get('/api/articles/1/comments')
             .expect(200)
-            expect(body).toBeSortedBy('created_at', {
+            expect(body.comments).toBeSortedBy('created_at', {
                 descending: true
             })
-        } catch(error) {
-            throw error
-        }
+    });
+    it('should return an empty array for an article that has no comments', async () => {
+        const { body } = await request(app)
+            .get('/api/articles/2/comments')
+            .expect(200)
+            expect(body.comments.length).toBe(0)
     });
 });
 
 describe('POST /api/articles/:article_id/comments', () => {
     it('should post a comment to the database', async () => {
-        try{
             const input = {
                 "username": "butter_bridge",
                 "body": "Testing, testing. 1, 2, 3."
@@ -87,9 +77,6 @@ describe('POST /api/articles/:article_id/comments', () => {
                 votes: expect.any(Number),
                 created_at: expect.any(String)
             })
-        } catch(error) {
-            throw error
-        }
     });
     it('should not post when a username does not exist', async () => {
         const input = {
