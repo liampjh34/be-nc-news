@@ -46,5 +46,29 @@
       "votes": 0,
       "comment_count": 6
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves the comments on an article",
+    "queries": [],
+    "exampleResponse": {
+      "comment_id": "a unique identifier for the comment",
+      "body": "the comment",
+      "article_id": "a unique identifier for the parent article",
+      "author": "the username of the author",
+      "created_at": "the timestamp of the comment",
+      "votes": "the number of votes on the comments"
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "post a comment to an article",
+    "queries": [],
+    "exampleResponse": {
+      "article_id": "a unique identifier for the parent article",
+      "author": "the username of the commenter",
+      "body": "a unique identifier for the parent article",
+      "comment_id": "a unique identifier for the comment",
+      "created_at": "the timestamp of the comment",
+      "votes": "the number of votes on the comments"
+    }
   }
 }
