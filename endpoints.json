@@ -59,6 +59,15 @@
       "votes": "the number of votes on the comments"
     }
   },
+  "GET api/users" : {
+    "description": "serves a list of all users",
+    "queries": [],
+    "exampleResponse": {
+      "username": "the username of the user",
+      "name": "the name of the user",
+      "avatar_url": "a link to the profile image of the user"
+    }
+  },
   "POST /api/articles/:article_id/comments": {
     "description": "post a comment to an article",
     "queries": [],

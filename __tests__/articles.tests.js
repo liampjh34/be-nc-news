@@ -66,7 +66,7 @@ describe('GET /api/articles/:article_id', () => {
 });
 
 describe('PATCH /api/articles/:article_id', () => {
-    it('decrementing votes should respond with 200 and the updated article', async () => {
+    it('incrementing votes should respond with 200 and the updated article', async () => {
         const input = {
             inc_votes: 1
         }
@@ -109,7 +109,7 @@ describe('PATCH /api/articles/:article_id', () => {
         const { body } = await request(app)
         .patch('/api/articles/3')
         .send(input)
-        .expect(403)
+        .expect(400)
         expect(body.msg).toBe('Not allowed!')
     });
     it('should 403 if trying to decrement votes more than the vote count', async () => {
@@ -119,7 +119,7 @@ describe('PATCH /api/articles/:article_id', () => {
         const { body } = await request(app)
         .patch('/api/articles/1')
         .send(input)
-        .expect(403)
+        .expect(400)
         expect(body.msg).toBe('Not allowed!')
     });
     it('should 404 for an article that does not exist', async () => {
