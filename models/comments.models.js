@@ -32,7 +32,7 @@ exports.handleComment = async (username, article_id, body) => {
         ]
 
         const promiseResults = await Promise.all(promises)
-        
+
         const queryString = `INSERT INTO comments
         (body, article_id, author)
         VALUES ($1, $2, $3)

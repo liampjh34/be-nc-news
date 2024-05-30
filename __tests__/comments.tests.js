@@ -70,22 +70,26 @@ describe('GET /api/articles/:article_id/comments', () => {
 
 describe('POST /api/articles/:article_id/comments', () => {
     it('should post a comment to the database', async () => {
-        const input = {
-            "username": "butter_bridge",
-            "body": "Testing, testing. 1, 2, 3."
+        try{
+            const input = {
+                "username": "butter_bridge",
+                "body": "Testing, testing. 1, 2, 3."
+            }
+            const { body } = await request(app)
+            .post('/api/articles/1/comments')
+            .send(input)
+            .expect(200)
+            expect(body).toMatchObject({
+                comment_id: expect.any(Number),
+                body: expect.any(String),
+                article_id: expect.any(Number),
+                author: expect.any(String),
+                votes: expect.any(Number),
+                created_at: expect.any(String)
+            })
+        } catch(error) {
+            throw error
         }
-        const { body } = await request(app)
-        .post('/api/articles/1/comments')
-        .send(input)
-        .expect(200)
-        expect(body).toMatchObject({
-            comment_id: expect.any(Number),
-            body: expect.any(String),
-            article_id: expect.any(Number),
-            author: expect.any(String),
-            votes: expect.any(Number),
-            created_at: expect.any(String)
-        })
     });
     it('should not post when a username does not exist', async () => {
         const input = {
