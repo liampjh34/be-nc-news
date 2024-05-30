@@ -4,6 +4,7 @@ const { checkIsUser } = require('../error-handlers/check-is-user');
 const db = require('../db/connection')
 const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index');
+const { checkVotes } = require('../error-handlers/check-votes');
 
 beforeEach(() => {
     return seed(testData)
@@ -76,4 +77,35 @@ describe('checkIsUser()', () => {
             })
         }
     })
+});
+
+describe('checkVotes()', () => {
+    it('should reject if desired decrement > votes count', async () => {
+        try{
+            const input = {
+                inc_votes: 101
+            }
+            const articleId = 1
+            const result = await checkVotes(input, articleId)
+        } catch(error) {
+            expect(error).toMatchObject({
+                status: 403,
+                msg: 'Not allowed!'
+            })
+        }
+    });
+    it('should reject if trying to decrement an existing vote count of 0', async () => {
+        try{
+            const input = {
+                inc_votes: 101
+            }
+            const articleId = 3 // has 0 votes
+            const result = await checkVotes(input, articleId)
+        } catch(error) {
+            expect(error).toMatchObject({
+                status: 403,
+                msg: 'Not allowed!'
+            })
+        }
+    });
 });
