@@ -17,7 +17,7 @@ describe('GET /api/articles', () => {
         const { body } = await request(app)
         .get('/api/articles')
         .expect(200)
-        body.forEach((article) => {
+        body.articles.forEach((article) => {
             expect(article).toMatchObject({
                 author: expect.any(String),
                 title: expect.any(String),
@@ -34,11 +34,56 @@ describe('GET /api/articles', () => {
         const { body } = await request(app)
         .get('/api/articles')
         .expect(200)
-        body.forEach((article) => {
+        body.articles.forEach((article) => {
             if (article.article_id === 2) {
                 expect(article.comment_count).toBe(0)
             }
         })
+    });
+});
+
+describe('GET /api/articles?query=aQuery', () => {
+    it('should get queries by topic', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        expect(body.articles.length).toBe(1)
+        body.articles.forEach((article) => {
+            expect(article).toMatchObject({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                topic: 'cats',
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                article_img_url: expect.any(String),
+                comment_count: expect.any(Number)
+            })
+        })
+    });
+    it('should return all articles if no topic is provided', async () => {
+        const { body } = await request(app)
+        .get('/api/articles')
+        .expect(200)
+        expect(body.articles.length).toBe(13)
+        body.articles.forEach((article) => {
+            expect(article).toMatchObject({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                article_img_url: expect.any(String),
+                comment_count: expect.any(Number)
+            })
+        })
+    });
+    it('should return an empty list if the topic does not exist', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?topic=somethingWitty')
+        .expect(200)
+        expect(body.articles.length).toBe(0)
     });
 });
 
