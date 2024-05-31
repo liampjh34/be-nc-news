@@ -79,6 +79,6 @@ exports.handleCommentDelete = async (commentId) => {
 
   return Promise.reject({
     status: 500,
-    msg: 'Unknown issue'
+    msg: 'Internal server error'
   })
 }

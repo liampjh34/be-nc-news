@@ -85,6 +85,12 @@ describe('GET /api/articles?query=aQuery', () => {
         .expect(200)
         expect(body.articles.length).toBe(0)
     });
+    it('should return an empty list if the topic has no articles', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?topic=Paper')
+        .expect(200)
+        expect(body.articles.length).toBe(0)
+    });
 });
 
 describe('GET /api/articles/:article_id', () => {
@@ -99,8 +105,7 @@ describe('GET /api/articles/:article_id', () => {
             body: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number),
-            article_img_url: expect.any(String),
-            comment_count: expect.any(Number)
+            article_img_url: expect.any(String)
         })
     });
     it('should 404 when article does not exist', async () => {
@@ -114,6 +119,14 @@ describe('GET /api/articles/:article_id', () => {
         .get('/api/articles/e')
         .expect(400)
         expect(body.msg).toBe('Wrong data type')
+    });
+    it('should return comment_count for an article', async () => {
+        const { body } = await request(app)
+        .get('/api/articles/2')
+        .expect(200)
+        expect(body).toMatchObject({
+            comment_count: expect.any(Number)
+        })
     });
 });
 

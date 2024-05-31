@@ -6,7 +6,6 @@ exports.getArticles = async (req, res, next) => {
         const fetchedArticles = await fetchArticles(topic)
         res.status(200).send(fetchedArticles)
     } catch(error) {
-        console.log(error)
         next(error)
     }
 }
