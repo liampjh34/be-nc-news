@@ -1,0 +1,17 @@
+exports.isValidOrder = async (desiredOrder) => {
+    const validSorts = [
+        'asc',
+        'desc',
+        undefined
+    ]
+
+    if (validSorts.includes(desiredOrder)) {
+        return Promise.resolve(true)
+    } 
+
+    return Promise.reject({
+        status: 400,
+        msg: 'Incorrect order by value'
+    })
+
+}
