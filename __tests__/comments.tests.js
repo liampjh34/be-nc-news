@@ -114,20 +114,21 @@ describe('POST /api/articles/:article_id/comments', () => {
 });
 
 describe('DELETE /api/comments/:comment_id', () => {
-    it('should 200 and delete a comment', async () => {
+    it('should 204 and delete a comment', async () => {
         const { body } = await request(app)
         .delete('/api/comments/3')
         .expect(204)
+        expect(body).toEqual({})
     });
-    it('should error if associated article does not have comments', async () => {
+    it('should 404 if associated article does not have comments', async () => {
         const { body } = await request(app)
         .delete('/api/comments/3453453')
         .expect(404)
         expect(body.msg).toBe('comment not found')
     })
-    it('should error if parametric id is NaN', async () => {
+    it('should 400 if parametric id is NaN', async () => {
         const { body } = await request(app)
-        .delete('/api/comments/e')
+        .delete('/api/comments/invalid_id')
         .expect(400)
         expect(body.msg).toBe('Wrong data type')
     });;
