@@ -2,7 +2,8 @@ const request = require('supertest');
 const app = require('../app');
 const db = require('../db/connection');
 const seed = require('../db/seeds/seed');
-const testData = require('../db/data/test-data/index')
+const testData = require('../db/data/test-data/index');
+const sorted = require('jest-sorted')
 
 beforeEach(() => {
     return seed(testData)
@@ -26,7 +27,7 @@ describe('GET /api/articles', () => {
                 created_at: expect.any(String),
                 votes: expect.any(Number),
                 article_img_url: expect.any(String),
-                comment_count: expect.any(Number)
+                comments: expect.any(Number)
             })
         })
     });
@@ -36,9 +37,99 @@ describe('GET /api/articles', () => {
         .expect(200)
         body.articles.forEach((article) => {
             if (article.article_id === 2) {
-                expect(article.comment_count).toBe(0)
+                expect(article.comments).toBe(0)
             }
         })
+    });
+    it('should support sorting results by the author column', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?sort_by=author')
+        .expect(200)
+        expect(body.articles).toBeSortedBy('author', {
+            descending: true
+        })
+    });
+    it('should support sorting results by the title', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?sort_by=title')
+        .expect(200)
+        expect(body.articles).toBeSortedBy('title', {
+            descending: true
+        })
+    });
+    it('should support sorting results by the topic', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?sort_by=topic')
+        .expect(200)
+        expect(body.articles).toBeSortedBy('topic', {
+            descending: true
+        })
+    })
+    it('should support sorting results by number of votes', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?sort_by=votes')
+        .expect(200)
+        expect(body.articles).toBeSortedBy('votes', {
+            descending: true
+        })
+    });
+    it('should support sorting results by number of comments', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?sort_by=comments')
+        .expect(200)
+        expect(body.articles).toBeSortedBy('comments', {
+            descending: true
+        })
+    })
+    it('should 400 if an invalid sort is given', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?sort_by=invalid_sort')
+        .expect(400)
+        expect(body.msg).toBe('Incorrect sort value')
+    });
+    it('uses created_at and descending order when given it as a desired order, and no sort_by is given', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?order=desc')
+        .expect(200)
+        expect(body.articles).toBeSortedBy('created_at', {
+            descending: true
+        })
+    });
+    it('uses created_at and ascending order when given it as a desired order, but no sort_by is given', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?order=asc')
+        .expect(200)
+        expect(body.articles).toBeSortedBy('created_at')
+    });
+    it('uses created_at and descending order by default when not given a desired order, and no sort_by is given', async () => {
+        const { body } = await request(app)
+        .get('/api/articles')
+        .expect(200)
+        expect(body.articles).toBeSortedBy('created_at', {
+            descending: true
+        })
+    });
+    it('uses the desired sort value for sorting if given, and orders by created_at DESC if no desired order is given', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?sort_by=author')
+        .expect(200)
+        expect(body.articles).toBeSortedBy('author', {
+            descending: true
+        })
+    });
+    it('uses the desired sort value for sorting if given, and orders by created_at DESC if given as a desired order', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?sort_by=author&order=desc')
+        .expect(200)
+        expect(body.articles).toBeSortedBy('author', {
+            descending: true
+        })
+    });
+    it('uses the desired sort value for sorting if given, and orders by created_at ASC if given as a desired order', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?sort_by=author&order=asc')
+        .expect(200)
+        expect(body.articles).toBeSortedBy('author')
     });
 });
 
@@ -57,7 +148,7 @@ describe('GET /api/articles?query=aQuery', () => {
                 created_at: expect.any(String),
                 votes: expect.any(Number),
                 article_img_url: expect.any(String),
-                comment_count: expect.any(Number)
+                comments: expect.any(Number)
             })
         })
     });
@@ -75,7 +166,7 @@ describe('GET /api/articles?query=aQuery', () => {
                 created_at: expect.any(String),
                 votes: expect.any(Number),
                 article_img_url: expect.any(String),
-                comment_count: expect.any(Number)
+                comments: expect.any(Number)
             })
         })
     });

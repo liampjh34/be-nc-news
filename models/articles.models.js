@@ -3,10 +3,19 @@ const { checkArticleExists } = require("../error-handlers/check-article-exists")
 const { checkIsNumber } = require("../error-handlers/check-is-number");
 const { checkVotes } = require('../error-handlers/check-votes')
 const { checkExists } = require('../error-handlers/check-exists')
-const format = require('pg-format')
+const format = require('pg-format');
+const { isValidSort } = require("../error-handlers/check-valid-sort");
+const { isValidOrder } = require("../error-handlers/check-valid-order");
 
-exports.fetchArticles = async (topic=undefined) => {
+exports.fetchArticles = async (topic=undefined, desiredSort=undefined, desiredOrder='desc') => {
   try {
+    const errorHandlingPromises = [
+      isValidSort(desiredSort),
+      isValidOrder(desiredOrder)
+    ]
+
+    await Promise.all(errorHandlingPromises)
+
     let query = `SELECT 
     articles.author,
     articles.title,
@@ -15,7 +24,7 @@ exports.fetchArticles = async (topic=undefined) => {
     articles.created_at,
     articles.votes,
     articles.article_img_url,
-    CAST(COUNT(comments.body) AS INT) AS comment_count
+    CAST(COUNT(comments.body) AS INT) AS comments
     FROM articles
     LEFT JOIN comments
     ON articles.article_id = comments.article_id`
@@ -25,9 +34,20 @@ exports.fetchArticles = async (topic=undefined) => {
       query += whereClause
     }
 
-    query += ` 
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC;`
+    query += ` GROUP BY articles.article_id`
+
+    if (!(desiredSort === undefined)) {
+      const sortByClause = desiredSort === 'comments' ? ` ORDER BY comments` : format(` ORDER BY articles.%s`, desiredSort)
+      query += sortByClause
+    } else {
+      query += ` ORDER BY articles.created_at`
+    }
+
+    if (desiredOrder === undefined || desiredOrder === 'desc') {
+      query += ` DESC`
+    } else {
+      query += ` ASC`
+    }
 
     const { rows } = await db.query(query)
     return {
