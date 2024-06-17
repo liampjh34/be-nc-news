@@ -69,7 +69,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             .post('/api/articles/1/comments')
             .send(input)
             .expect(200)
-            expect(body).toMatchObject({
+            expect(body.comment).toMatchObject({
                 comment_id: expect.any(Number),
                 body: expect.any(String),
                 article_id: expect.any(Number),
@@ -86,7 +86,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         const { body } = await request(app)
         .post('/api/articles/1/comments')
         .send(input)
-        .expect(400)
+        .expect(404)
         expect(body.msg).toEqual("No user found")
     });
     it('should not post when an article does not exist', async () => {

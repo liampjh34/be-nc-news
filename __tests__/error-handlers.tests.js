@@ -67,13 +67,13 @@ describe('checkIsUser()', () => {
         const result = await checkIsUser(input)
         expect(result).toBe(true)
     });
-    it('should 400 for user that does not exist', async () => {
+    it('should 404 for user that does not exist', async () => {
         try{
             const input = 'liampjh34'
             const result = await checkIsUser(input)
         } catch(error) {
             expect(error).toMatchObject({
-                status: 400,
+                status: 404,
                 msg: "No user found"
             })
         }
