@@ -9,7 +9,7 @@ exports.checkIsUser = async (username) => {
 
     if (rows.length === 0) {
         return Promise.reject({
-            status: 400,
+            status: 404,
             msg: "No user found"
         })
     }

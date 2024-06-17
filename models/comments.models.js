@@ -50,7 +50,9 @@ exports.handleComment = async (username, article_id, body) => {
 
     const { rows } = await db.query(queryString, queryParams);
 
-    return rows[0];
+    return {
+      comment: rows[0]
+    };
   } catch (error) {
     throw error;
   }

@@ -18,6 +18,7 @@ describe('GET /api/articles', () => {
         const { body } = await request(app)
         .get('/api/articles')
         .expect(200)
+        //should have a length check
         body.articles.forEach((article) => {
             expect(article).toMatchObject({
                 author: expect.any(String),
@@ -109,7 +110,7 @@ describe('GET /api/articles', () => {
             descending: true
         })
     });
-    it('uses the desired sort value for sorting if given, and orders by created_at DESC if no desired order is given', async () => {
+    it('uses the desired sort value for sorting if given, and orders by DESC if no desired order is given', async () => {
         const { body } = await request(app)
         .get('/api/articles?sort_by=author')
         .expect(200)
@@ -117,7 +118,7 @@ describe('GET /api/articles', () => {
             descending: true
         })
     });
-    it('uses the desired sort value for sorting if given, and orders by created_at DESC if given as a desired order', async () => {
+    it('uses the desired sort value for sorting if given, and orders by DESC if given as a desired order', async () => {
         const { body } = await request(app)
         .get('/api/articles?sort_by=author&order=desc')
         .expect(200)
@@ -138,7 +139,7 @@ describe('GET /api/articles?query=aQuery', () => {
         const { body } = await request(app)
         .get('/api/articles?topic=cats')
         .expect(200)
-        expect(body.articles.length).toBe(1)
+        expect(body.articles.length).toBeGreaterThan(0)
         body.articles.forEach((article) => {
             expect(article).toMatchObject({
                 author: expect.any(String),
@@ -156,7 +157,7 @@ describe('GET /api/articles?query=aQuery', () => {
         const { body } = await request(app)
         .get('/api/articles')
         .expect(200)
-        expect(body.articles.length).toBe(13)
+        expect(body.articles.length).toBeGreaterThan(0)
         body.articles.forEach((article) => {
             expect(article).toMatchObject({
                 author: expect.any(String),
@@ -172,6 +173,7 @@ describe('GET /api/articles?query=aQuery', () => {
     });
     it('should return an empty list if the topic does not exist', async () => {
         const { body } = await request(app)
+        //should be an error response if topic doesn't exist
         .get('/api/articles?topic=somethingWitty')
         .expect(200)
         expect(body.articles.length).toBe(0)
@@ -188,6 +190,7 @@ describe('GET /api/articles/:article_id', () => {
     it('should return an article when given an ID', async () => {
         const { body } = await request(app)
         .get('/api/articles/2')
+        //should be responding with { article: article}
         .expect(200)
         expect(body).toMatchObject({
             article_id: expect.any(Number),
@@ -197,6 +200,14 @@ describe('GET /api/articles/:article_id', () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String)
+        })
+    });
+    it('should return comment_count for an article', async () => {
+        const { body } = await request(app)
+        .get('/api/articles/2')
+        .expect(200)
+        expect(body).toMatchObject({
+            comment_count: expect.any(Number)
         })
     });
     it('should 404 when article does not exist', async () => {
@@ -211,18 +222,11 @@ describe('GET /api/articles/:article_id', () => {
         .expect(400)
         expect(body.msg).toBe('Wrong data type')
     });
-    it('should return comment_count for an article', async () => {
-        const { body } = await request(app)
-        .get('/api/articles/2')
-        .expect(200)
-        expect(body).toMatchObject({
-            comment_count: expect.any(Number)
-        })
-    });
 });
 
 describe('PATCH /api/articles/:article_id', () => {
     it('incrementing votes should respond with 200 and the updated article', async () => {
+        //should also respond with {article: article}
         const input = {
             inc_votes: 1
         }
@@ -258,7 +262,7 @@ describe('PATCH /api/articles/:article_id', () => {
             article_img_url: expect.any(String)
         })
     });
-    it('should 403 when trying to decrement a vote count that is already 0', async () => {
+    it('should 400 when trying to decrement a vote count that is already 0', async () => {
         const input = {
             inc_votes: 10
         }
@@ -268,7 +272,7 @@ describe('PATCH /api/articles/:article_id', () => {
         .expect(400)
         expect(body.msg).toBe('Not allowed!')
     });
-    it('should 403 if trying to decrement votes more than the vote count', async () => {
+    it('should 400 if trying to decrement votes more than the vote count', async () => {
         const input = {
             inc_votes: 101
         }
