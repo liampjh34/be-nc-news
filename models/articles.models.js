@@ -79,7 +79,9 @@ exports.fetchArticleById = async (articleId) => {
 
     const {rows} = await db.query(queryString, queryParams);
 
-    return rows[0]
+    return {
+      article: rows[0]
+    }
 
   } catch (error) {
     throw error
