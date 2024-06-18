@@ -192,7 +192,7 @@ describe('GET /api/articles/:article_id', () => {
         .get('/api/articles/2')
         //should be responding with { article: article}
         .expect(200)
-        expect(body).toMatchObject({
+        expect(body.article).toMatchObject({
             article_id: expect.any(Number),
             title: expect.any(String),
             author: expect.any(String),
@@ -206,7 +206,7 @@ describe('GET /api/articles/:article_id', () => {
         const { body } = await request(app)
         .get('/api/articles/2')
         .expect(200)
-        expect(body).toMatchObject({
+        expect(body.article).toMatchObject({
             comment_count: expect.any(Number)
         })
     });
