@@ -264,7 +264,7 @@ describe('PATCH /api/articles/:article_id', () => {
     });
     it('should 400 when trying to decrement a vote count that is already 0', async () => {
         const input = {
-            inc_votes: 10
+            inc_votes: -10
         }
         const { body } = await request(app)
         .patch('/api/articles/3')
@@ -274,7 +274,7 @@ describe('PATCH /api/articles/:article_id', () => {
     });
     it('should 400 if trying to decrement votes more than the vote count', async () => {
         const input = {
-            inc_votes: 101
+            inc_votes: -101
         }
         const { body } = await request(app)
         .patch('/api/articles/1')

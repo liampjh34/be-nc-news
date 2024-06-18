@@ -16,7 +16,7 @@ exports.checkVotes = async (desiredDecrement, articleId) => {
         const { rows } = await db.query(query)
         const votes = rows[0].votes
 
-        if (inc_votes > votes) {
+        if ((votes + inc_votes) < 0) {
             return Promise.reject({
                 status: 400,
                 msg: 'Not allowed!'

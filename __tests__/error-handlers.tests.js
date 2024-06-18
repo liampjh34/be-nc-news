@@ -84,7 +84,7 @@ describe('checkVotes()', () => {
     it('should reject if desired decrement > votes count', async () => {
         try{
             const input = {
-                inc_votes: 101
+                inc_votes: -101
             }
             const articleId = 1
             const result = await checkVotes(input, articleId)
@@ -98,7 +98,7 @@ describe('checkVotes()', () => {
     it('should reject if trying to decrement an existing vote count of 0', async () => {
         try{
             const input = {
-                inc_votes: 101
+                inc_votes: -101
             }
             const articleId = 3 // has 0 votes
             const result = await checkVotes(input, articleId)
