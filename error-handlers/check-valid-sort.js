@@ -5,6 +5,7 @@ exports.isValidSort = async (desiredSort) => {
         'topic',
         'votes',
         'comments',
+        'created_at',
         undefined
     ]
 

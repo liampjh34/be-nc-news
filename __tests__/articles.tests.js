@@ -81,7 +81,15 @@ describe('GET /api/articles', () => {
         expect(body.articles).toBeSortedBy('comments', {
             descending: true
         })
-    })
+    });
+    it('should support sorting results by the created_at timestamp', async () => {
+        const { body } = await request(app)
+        .get('/api/articles?sort_by=created_at')
+        .expect(200)
+        expect(body.articles).toBeSortedBy('created_at', {
+            descending: true
+        })
+    });
     it('should 400 if an invalid sort is given', async () => {
         const { body } = await request(app)
         .get('/api/articles?sort_by=invalid_sort')
